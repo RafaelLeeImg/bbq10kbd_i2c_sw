@@ -4,8 +4,8 @@
 
 const uint8_t row_pins[NUM_OF_ROWS] =
 {
-	PIN_PA23, // KBD_ROW1
-	PIN_PA25, // KBD_ROW2
+	PIN_PA19, // KBD_ROW1
+	PIN_PA23, // KBD_ROW2
 	PIN_PA02, // KBD_ROW3
 	PIN_PA04, // KBD_ROW4
 	PIN_PA05, // KBD_ROW5
@@ -15,7 +15,7 @@ const uint8_t row_pins[NUM_OF_ROWS] =
 
 const uint8_t col_pins[NUM_OF_COLS] =
 {
-	PIN_PA24, // KBD_COL1
+	PIN_PA22, // KBD_COL1
 	PIN_PA27, // KBD_COL2
 	PIN_PA00, // KBD_COL3
 	PIN_PA01, // KBD_COL4

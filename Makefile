@@ -8,6 +8,10 @@ SIZE    := $(CROSS_COMPILE)size
 
 include targets/$(TARGET)/target.mk
 
+SAMD          ?= samd20
+SAMD_I2C      ?= $(SAMD)
+SAMD_CLOCK    ?= $(SAMD)
+
 SRCS += \
 	SDK/common/utils/interrupt/interrupt_sam_nvic.c \
 	SDK/common2/services/delay/sam0/cycle_counter.c \
@@ -15,15 +19,15 @@ SRCS += \
 	SDK/sam0/drivers/sercom/sercom.c \
 	SDK/sam0/drivers/sercom/sercom_interrupt.c \
 	SDK/sam0/drivers/sercom/usart/usart.c \
-	SDK/sam0/drivers/system/clock/clock_samd20/clock.c \
-	SDK/sam0/drivers/system/clock/clock_samd20/gclk.c \
-	SDK/sam0/drivers/sercom/i2c/i2c_samd20/i2c_slave.c \
-	SDK/sam0/drivers/sercom/i2c/i2c_samd20/i2c_slave_interrupt.c \
+	SDK/sam0/drivers/system/clock/clock_$(SAMD_CLOCK)/clock.c \
+	SDK/sam0/drivers/system/clock/clock_$(SAMD_CLOCK)/gclk.c \
+	SDK/sam0/drivers/sercom/i2c/i2c_$(SAMD_I2C)/i2c_slave.c \
+	SDK/sam0/drivers/sercom/i2c/i2c_$(SAMD_I2C)/i2c_slave_interrupt.c \
 	SDK/sam0/drivers/system/pinmux/pinmux.c \
 	SDK/sam0/drivers/system/system.c \
 	SDK/sam0/drivers/tc/tc_sam_d_r_h/tc.c \
-	SDK/sam0/utils/cmsis/samd20/source/gcc/startup_samd20.c \
-	SDK/sam0/utils/cmsis/samd20/source/system_samd20.c \
+	SDK/sam0/utils/cmsis/$(SAMD)/source/gcc/startup_$(SAMD).c \
+	SDK/sam0/utils/cmsis/$(SAMD)/source/system_$(SAMD).c \
 	SDK/sam0/utils/syscalls/gcc/syscalls.c \
 	targets/$(TARGET)/target.c \
 	app/backlight.c \
@@ -44,17 +48,17 @@ INCS += \
 	SDK/sam0/drivers/sercom/i2c \
 	SDK/sam0/drivers/system \
 	SDK/sam0/drivers/system/clock \
-	SDK/sam0/drivers/system/clock/clock_samd20 \
+	SDK/sam0/drivers/system/clock/clock_$(SAMD_CLOCK) \
 	SDK/sam0/drivers/sercom \
 	SDK/sam0/drivers/system/interrupt \
-	SDK/sam0/drivers/system/interrupt/system_interrupt_samd20 \
+	SDK/sam0/drivers/system/interrupt/system_interrupt_$(SAMD) \
 	SDK/sam0/drivers/system/pinmux \
 	SDK/sam0/drivers/system/power/power_sam_d_r_h \
 	SDK/sam0/drivers/system/reset/reset_sam_d_r_h \
 	SDK/sam0/drivers/tc \
 	SDK/sam0/utils \
-	SDK/sam0/utils/cmsis/samd20/include \
-	SDK/sam0/utils/cmsis/samd20/source \
+	SDK/sam0/utils/cmsis/$(SAMD)/include \
+	SDK/sam0/utils/cmsis/$(SAMD)/source \
 	SDK/sam0/utils/header_files \
 	SDK/sam0/utils/preprocessor \
 	SDK/thirdparty/CMSIS/Include \
@@ -71,7 +75,7 @@ LIBS += \
 
 OBJS := $(patsubst %.c,out/$(TARGET)/obj/%.c.o, $(filter %.c, $(SRCS)))
 DEPS := $(patsubst %.o,%.d,$(OBJS))
-LDSCRIPT := SDK/sam0/utils/linker_scripts/samd20/gcc/$(LD_FILE)
+LDSCRIPT := SDK/sam0/utils/linker_scripts/$(SAMD)/gcc/$(LD_FILE)
 
 CFLAGS := \
 	-mcpu=cortex-m0plus -mthumb \
