@@ -10,8 +10,8 @@
 #include "time.h"
 
 #define DEBUG
-#define DEBUG_SOFT_SERIAL
-#define DEBUG_SOFT_SERIAL_PIN PIN_PA16
+//#define DEBUG_SOFT_SERIAL
+//#define DEBUG_SOFT_SERIAL_PIN PIN_PA16
 
 #ifdef DEBUG
 #ifndef DEBUG_SOFT_SERIAL
