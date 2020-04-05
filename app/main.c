@@ -9,13 +9,71 @@
 #include "target.h"
 #include "time.h"
 
+#define DEBUG
+#define DEBUG_SOFT_SERIAL
+#define DEBUG_SOFT_SERIAL_PIN PIN_PA16
+
 #ifdef DEBUG
+#ifndef DEBUG_SOFT_SERIAL
 static struct usart_module usart_instance;
+#endif
 #endif
 
 #ifdef DEBUG
+#ifdef DEBUG_SOFT_SERIAL
+void debug_out_byte(int c)
+{
+	int i;
+	int pin = DEBUG_SOFT_SERIAL_PIN;
+	int delay = 20; /* magic number for 9600 baud */
+	int parity = 0;
+
+	/* start bit */
+	port_pin_set_output_level(pin, 0);
+	delay_us(delay);
+
+	/* send byte */
+	for (i = 0; i < 8; i++) {
+		port_pin_set_output_level(pin, (c & (0x01 << i)) ? 1 : 0);
+		parity += ((c & (0x01 << i)) ? 1 : 0);
+		delay_us(delay);
+	}
+
+#if 0
+	/* parity bit */
+	port_pin_set_output_level(pin, (parity % 2) ? 1 : 0);
+	delay_us(delay);
+#endif
+
+	/* stop bit */
+	port_pin_set_output_level(pin, 1);
+	delay_us(delay);
+}
+
+int debug_out(const char *msg, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < len; i++) {
+		debug_out_byte(msg[i]);
+	}
+
+	return len;
+}
+#endif /* DEBUG_SOFT_SERIAL */
+
 static void configure_usart(void)
 {
+#ifdef DEBUG_SOFT_SERIAL
+	struct port_config port_init;
+	port_get_config_defaults(&port_init);
+
+	port_init.direction = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(DEBUG_SOFT_SERIAL_PIN, &port_init);
+
+	port_pin_set_output_level(DEBUG_SOFT_SERIAL_PIN, 1);
+	delay_ms(100);
+#else
 	struct usart_config config_usart;
 	usart_get_config_defaults(&config_usart);
 
@@ -28,18 +86,27 @@ static void configure_usart(void)
 
 	while (usart_init(&usart_instance, CONF_UART_MODULE, &config_usart) != STATUS_OK) { }
 	usart_enable(&usart_instance);
+#endif /* DEBUG_SOFT_SERIAL */
 }
 
 int _write(void *fd, const char *msg, size_t len)
 {
+#ifdef DEBUG_SOFT_SERIAL
+	debug_out(msg, len);
+#else
 	usart_write_buffer_wait(&usart_instance, (const uint8_t*)msg, len);
+#endif
 
 	return len;
 }
 
 int _read(void *fd, char *msg, size_t len)
 {
+#ifdef DEBUG_SOFT_SERIAL
+	/* not implemented */
+#else
 	usart_read_buffer_wait(&usart_instance, (uint8_t *)msg, len);
+#endif
 
 	return len;
 }
