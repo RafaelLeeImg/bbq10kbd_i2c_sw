@@ -8,8 +8,8 @@
 #include "reg.h"
 #include "target.h"
 #include "time.h"
+#include "usb.h"
 
-#define DEBUG
 //#define DEBUG_SOFT_SERIAL
 //#define DEBUG_SOFT_SERIAL_PIN PIN_PA16
 
@@ -190,6 +190,7 @@ int main(void)
 
 #ifdef DEBUG
 	configure_usart();
+	printf("Initializing...\r\n");
 #endif
 
 	config_int_pin();
@@ -201,6 +202,7 @@ int main(void)
 	keyboard_set_lock_callback(lock_cb);
 
 	i2c_init();
+	bbq10_usb_init();
 
 #ifdef DEBUG
 	printf("Starting main loop\r\n");

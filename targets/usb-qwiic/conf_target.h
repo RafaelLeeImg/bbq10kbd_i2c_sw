@@ -18,3 +18,14 @@
 #define NUM_OF_COLS						5
 #define NUM_OF_ROWS						7
 #define NUM_OF_BTNS						0
+
+#define USB_DEVICE_VENDOR_ID	0x03EB
+#define USB_DEVICE_PRODUCT_ID	0x0123
+
+/* Enable USB VBUS detect */
+//#define CONF_BOARD_USB_VBUS_DETECT  // no pin assign for VBUS detection
+
+#define UDD_CLOCK_GEN      GCLK_GENERATOR_1
+#define UDD_CLOCK_SOURCE   SYSTEM_CLOCK_SOURCE_DFLL
+
+#define CONFIG_SLEEPMGR_ENABLE

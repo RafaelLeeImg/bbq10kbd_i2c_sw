@@ -65,13 +65,47 @@ INCS += \
 	targets/$(TARGET) \
 	targets \
 	app/config \
-	app
 
 DEFS += \
 	I2C_SLAVE_CALLBACK_MODE=true \
 	CYCLE_MODE
 
 LIBS += \
+
+ifeq ($(BBQ10_DEBUG_ENABLE),true)
+DEFS += \
+	DEBUG \
+
+endif
+
+ifeq ($(BBQ10_USB_ENABLE),true)
+SRCS += \
+	SDK/common/services/sleepmgr/samd/sleepmgr.c \
+	SDK/common/services/usb/class/hid/device/kbd/udi_hid_kbd.c \
+	SDK/common/services/usb/class/hid/device/kbd/udi_hid_kbd_desc.c \
+	SDK/common/services/usb/class/hid/device/udi_hid.c \
+	SDK/common/services/usb/udc/udc.c \
+	SDK/sam0/drivers/usb/usb_sam_d_r/usb.c \
+	SDK/sam0/drivers/usb/stack_interface/usb_device_udd.c  \
+	app/usb.c \
+
+INCS += \
+	SDK/common/boards \
+	SDK/common/boards/user_board \
+	SDK/common/services/sleepmgr \
+	SDK/common/services/usb \
+	SDK/common/services/usb/udc \
+	SDK/common/services/usb/class/hid \
+	SDK/common/services/usb/class/hid/device \
+	SDK/common/services/sleepmgr/samd \
+	SDK/sam0/drivers/extint \
+	SDK/sam0/drivers/usb \
+
+DEFS += \
+	BBQ10_USB_ENABLE \
+	BOARD=USER_BOARD \
+
+endif
 
 OBJS := $(patsubst %.c,out/$(TARGET)/obj/%.c.o, $(filter %.c, $(SRCS)))
 DEPS := $(patsubst %.o,%.d,$(OBJS))
