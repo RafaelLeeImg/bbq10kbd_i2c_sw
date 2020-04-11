@@ -46,4 +46,5 @@ uint8_t reg_get_value(enum reg_id reg);
 void reg_set_value(enum reg_id reg, uint8_t value);
 bool reg_is_bit_set(enum reg_id reg, uint8_t bit);
 void reg_set_bit(enum reg_id reg, uint8_t bit);
+void reg_clear_bit(enum reg_id reg, uint8_t bit);
 void reg_init(void);

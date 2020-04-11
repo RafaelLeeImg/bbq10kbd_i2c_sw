@@ -124,6 +124,12 @@ static void key_cb(char key, enum key_state state)
 #ifdef DEBUG
 	printf("key: 0x%02X/%d/%c, state: %d, blk: %d\r\n", key, key, key, state, reg_get_value(REG_ID_BKL));
 #endif
+	if (state == KEY_STATE_PRESSED) {
+		bbq10_udi_hid_kbd_down(key);
+	} else
+	if (state == KEY_STATE_RELEASED) {
+		bbq10_udi_hid_kbd_up(key);
+	}
 
 	const struct fifo_item item = { key, state };
 	if (!fifo_enqueue(item)) {

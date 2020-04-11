@@ -22,6 +22,11 @@ void reg_set_bit(enum reg_id reg, uint8_t bit)
 	regs[reg] |= bit;
 }
 
+void reg_clear_bit(enum reg_id reg, uint8_t bit)
+{
+	regs[reg] &= ~bit;
+}
+
 void reg_init(void)
 {
 	regs[REG_ID_CFG] = CFG_OVERFLOW_INT | CFG_KEY_INT | CFG_USE_MODS;
