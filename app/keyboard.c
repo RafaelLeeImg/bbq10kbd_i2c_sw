@@ -156,13 +156,11 @@ static void next_item_state(struct list_item * const p_item, const bool pressed)
 					self.numlock_changed = true;
 				}
 
-				if (!self.mods[MOD_ALT]) {
-					self.capslock_changed = false;
-					self.numlock_changed = false;
-				}
-
 				if (self.lock_callback && (self.capslock_changed || self.numlock_changed))
 					self.lock_callback(self.capslock_changed, self.numlock_changed);
+
+				self.capslock_changed = false;
+				self.numlock_changed = false;
 
 				transition_to(p_item, KEY_STATE_PRESSED);
 
