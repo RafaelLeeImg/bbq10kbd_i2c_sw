@@ -9,6 +9,7 @@
 #include "target.h"
 #include "time.h"
 #include "usb.h"
+#include "led.h"
 
 //#define DEBUG_SOFT_SERIAL
 //#define DEBUG_SOFT_SERIAL_PIN PIN_PA16
@@ -153,6 +154,9 @@ static void lock_cb(bool caps_changed, bool num_changed)
 {
 	bool do_int = false;
 
+	bbq10_led_set(BBQ10_LED_CAPSLOCK, keyboard_get_capslock());
+	bbq10_led_set(BBQ10_LED_NUMLOCK, keyboard_get_numlock());
+
 	if (caps_changed && reg_is_bit_set(REG_ID_CFG, CFG_CAPSLOCK_INT)) {
 		reg_set_bit(REG_ID_INT, INT_CAPSLOCK);
 		do_int = true;
@@ -209,6 +213,7 @@ int main(void)
 
 	i2c_init();
 	bbq10_usb_init();
+	bbq10_led_init();
 
 #ifdef DEBUG
 	printf("Starting main loop\r\n");

@@ -107,6 +107,15 @@ DEFS += \
 
 endif
 
+ifeq ($(BBQ10_LED_ENABLE),true)
+SRCS += \
+	app/led.c \
+
+DEFS += \
+	BBQ10_LED_ENABLE \
+
+endif
+
 OBJS := $(patsubst %.c,out/$(TARGET)/obj/%.c.o, $(filter %.c, $(SRCS)))
 DEPS := $(patsubst %.o,%.d,$(OBJS))
 LDSCRIPT := SDK/sam0/utils/linker_scripts/$(SAMD)/gcc/$(LD_FILE)

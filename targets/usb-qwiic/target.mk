@@ -6,3 +6,4 @@ LD_FILE := samd21e17a_flash.ld
 
 BBQ10_DEBUG_ENABLE := true
 BBQ10_USB_ENABLE := true
+BBQ10_LED_ENABLE := true
