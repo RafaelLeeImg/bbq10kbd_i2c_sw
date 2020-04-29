@@ -13,6 +13,8 @@ struct usb_keycode {
 	uint16_t modifiers;
 } keycode_table[NUM_OF_KEYCODE];
 
+static int mod_shift_down = 0;
+
 void bbq10_usb_init(void)
 {
 	udc_start();
@@ -26,6 +28,7 @@ bool bbq10_udi_hid_callback_keyboard_enable(void)
 	flag_autorize_keyboard_events = true;
 	report_mods_saved = reg_is_bit_set(REG_ID_CFG, CFG_REPORT_MODS);
 	reg_set_bit(REG_ID_CFG, CFG_REPORT_MODS);
+	mod_shift_down = 0;
 	return true;
 }
 
@@ -56,8 +59,6 @@ void bbq10_udi_hid_kbd_up(int key_id)
 		return;
 	}
 	udi_hid_kbd_up(keycode);
-	if (mods & SHIFT)
-		udi_hid_kbd_modifier_up(HID_MODIFIER_LEFT_SHIFT);
 }
 
 void bbq10_udi_hid_kbd_down(int key_id)
@@ -77,8 +78,14 @@ void bbq10_udi_hid_kbd_down(int key_id)
 		udi_hid_kbd_modifier_down(mods);
 		return;
 	}
-	if (mods & SHIFT)
+	if ((mods & SHIFT) && !mod_shift_down) {
 		udi_hid_kbd_modifier_down(HID_MODIFIER_LEFT_SHIFT);
+		mod_shift_down = !mod_shift_down;
+	} else
+	if (!(mods & SHIFT) && mod_shift_down) {
+		udi_hid_kbd_modifier_up(HID_MODIFIER_LEFT_SHIFT);
+		mod_shift_down = !mod_shift_down;
+	}
 	udi_hid_kbd_down(keycode);
 }
 
