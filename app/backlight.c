@@ -2,6 +2,8 @@
 #include "conf_target.h"
 #include "reg.h"
 
+#define PWM_USE_TCC
+
 #ifdef PWM_USE_TCC
 	/* not implemented */
 #else

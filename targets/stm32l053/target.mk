@@ -1,2 +1,8 @@
-DEFS := __SAMD20E16__
-LD_FILE := samd20e16_flash.ld
+LIBNAME = opencm3_stm32l0
+DEFS += STM32L0
+
+LD_FILE := stm32l0xx8.ld
+
+FP_FLAGS ?= -msoft-float
+ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus $(FP_FLAGS)
+

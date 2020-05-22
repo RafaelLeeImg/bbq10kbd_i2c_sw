@@ -1,6 +1,6 @@
 #include "time.h"
 
-#include <clock_feature.h>
+// #include <clock_feature.h>
 
 static volatile uint32_t uptime_ms;
 
@@ -24,5 +24,4 @@ uint32_t time_uptime_ms(void)
 
 void time_init(void)
 {
-	SysTick_Config(system_cpu_clock_get_hz() / 1000);
 }

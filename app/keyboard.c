@@ -6,7 +6,6 @@
 #include "util.h"
 
 #include <stdlib.h>
-#include <port.h>
 
 enum mod
 {
@@ -194,20 +193,21 @@ static void next_item_state(struct list_item * const p_item, const bool pressed)
 
 void keyboard_process(void)
 {
-	struct port_config port_init;
+	// struct port_config port_init;
 
 	if ((time_uptime_ms() - self.last_process_time) <= KEY_POLL_TIME)
 		return;
 
-	port_get_config_defaults(&port_init);
+	// port_get_config_defaults(&port_init);
 
 	for (uint32_t c = 0; c < NUM_OF_COLS; ++c) {
-		port_init.direction = PORT_PIN_DIR_OUTPUT;
-		port_pin_set_config(col_pins[c], &port_init);
-		port_pin_set_output_level(col_pins[c], 0);
+		// port_init.direction = PORT_PIN_DIR_OUTPUT;
+		// port_pin_set_config(col_pins[c], &port_init);
+		// port_pin_set_output_level(col_pins[c], 0);
 
 		for (uint32_t r = 0; r < NUM_OF_ROWS; ++r) {
-			const bool pressed = (port_pin_get_input_level(row_pins[r]) == 0);
+			// const bool pressed = (port_pin_get_input_level(row_pins[r]) == 0);
+			const bool pressed = 0;
 			const int32_t key_idx = (int32_t)((r * NUM_OF_COLS) + c);
 
 			int32_t list_idx = -1;
@@ -220,7 +220,7 @@ void keyboard_process(void)
 			}
 
 			if (list_idx > -1) {
-				next_item_state(&self.list[list_idx], pressed);
+				// next_item_state(&self.list[list_idx], pressed);
 				continue;
 			}
 
@@ -239,16 +239,16 @@ void keyboard_process(void)
 			}
 		}
 
-		port_pin_set_output_level(col_pins[c], 1);
+		// port_pin_set_output_level(col_pins[c], 1);
 
-		port_init.direction = PORT_PIN_DIR_INPUT;
-		port_init.input_pull = PORT_PIN_PULL_NONE;
-		port_pin_set_config(col_pins[c], &port_init);
+		// port_init.direction = PORT_PIN_DIR_INPUT;
+		// port_init.input_pull = PORT_PIN_PULL_NONE;
+		// port_pin_set_config(col_pins[c], &port_init);
 	}
 
 #if NUM_OF_BTNS > 0
 	for (uint32_t b = 0; b < NUM_OF_BTNS; ++b) {
-		const bool pressed = (port_pin_get_input_level(btn_pins[b]) == 0);
+		const bool pressed = 0;
 
 		int32_t list_idx = -1;
 		for (int32_t i = 0; i < KEY_LIST_SIZE; ++i) {
@@ -305,29 +305,29 @@ bool keyboard_get_numlock(void)
 
 void keyboard_init(void)
 {
-	struct port_config port_init;
-	port_get_config_defaults(&port_init);
+// 	struct port_config port_init;
+// 	port_get_config_defaults(&port_init);
 
-	for (int i = 0; i < MOD_LAST; ++i)
-		self.mods[i] = false;
+// 	for (int i = 0; i < MOD_LAST; ++i)
+// 		self.mods[i] = false;
 
-	// Rows
-	port_init.direction = PORT_PIN_DIR_INPUT;
-	port_init.input_pull = PORT_PIN_PULL_UP;
-	for (uint32_t i = 0; i < NUM_OF_ROWS; ++i)
-		port_pin_set_config(row_pins[i], &port_init);
+// 	// Rows
+// 	port_init.direction = PORT_PIN_DIR_INPUT;
+// 	port_init.input_pull = PORT_PIN_PULL_UP;
+// 	for (uint32_t i = 0; i < NUM_OF_ROWS; ++i)
+// 		port_pin_set_config(row_pins[i], &port_init);
 
-	// Cols
-	port_init.direction = PORT_PIN_DIR_INPUT;
-	port_init.input_pull = PORT_PIN_PULL_NONE;
-	for(uint32_t i = 0; i < NUM_OF_COLS; ++i)
-		port_pin_set_config(col_pins[i], &port_init);
+// 	// Cols
+// 	port_init.direction = PORT_PIN_DIR_INPUT;
+// 	port_init.input_pull = PORT_PIN_PULL_NONE;
+// 	for(uint32_t i = 0; i < NUM_OF_COLS; ++i)
+// 		port_pin_set_config(col_pins[i], &port_init);
 
-	// Btns
-#if NUM_OF_BTNS > 0
-	port_init.direction = PORT_PIN_DIR_INPUT;
-	port_init.input_pull = PORT_PIN_PULL_UP;
-	for(uint32_t i = 0; i < NUM_OF_BTNS; ++i)
-		port_pin_set_config(btn_pins[i], &port_init);
-#endif
+// 	// Btns
+// #if NUM_OF_BTNS > 0
+// 	port_init.direction = PORT_PIN_DIR_INPUT;
+// 	port_init.input_pull = PORT_PIN_PULL_UP;
+// 	for(uint32_t i = 0; i < NUM_OF_BTNS; ++i)
+// 		port_pin_set_config(btn_pins[i], &port_init);
+// #endif
 }

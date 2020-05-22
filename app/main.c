@@ -1,6 +1,5 @@
-#include <delay/delay.h>
-#include <port.h>
-#include <usart/usart.h>
+// #include <delay/delay.h>
+// #include <usart/usart.h>
 
 #include "backlight.h"
 #include "fifo.h"
@@ -65,16 +64,16 @@ int debug_out(const char *msg, size_t len)
 
 static void configure_usart(void)
 {
-#ifdef DEBUG_SOFT_SERIAL
-	struct port_config port_init;
-	port_get_config_defaults(&port_init);
+// #ifdef DEBUG_SOFT_SERIAL
+// 	struct port_config port_init;
+// 	port_get_config_defaults(&port_init);
 
-	port_init.direction = PORT_PIN_DIR_OUTPUT;
-	port_pin_set_config(DEBUG_SOFT_SERIAL_PIN, &port_init);
+// 	port_init.direction = PORT_PIN_DIR_OUTPUT;
+// 	port_pin_set_config(DEBUG_SOFT_SERIAL_PIN, &port_init);
 
-	port_pin_set_output_level(DEBUG_SOFT_SERIAL_PIN, 1);
-	delay_ms(100);
-#else
+// 	port_pin_set_output_level(DEBUG_SOFT_SERIAL_PIN, 1);
+// 	delay_ms(100);
+// #else
 	struct usart_config config_usart;
 	usart_get_config_defaults(&config_usart);
 
@@ -87,7 +86,7 @@ static void configure_usart(void)
 
 	while (usart_init(&usart_instance, CONF_UART_MODULE, &config_usart) != STATUS_OK) { }
 	usart_enable(&usart_instance);
-#endif /* DEBUG_SOFT_SERIAL */
+// #endif /* DEBUG_SOFT_SERIAL */
 }
 
 int _write(void *fd, const char *msg, size_t len)
@@ -182,12 +181,12 @@ static void lock_cb(bool caps_changed, bool num_changed)
 
 static void config_int_pin(void)
 {
-	struct port_config port_init;
-	port_get_config_defaults(&port_init);
+	// struct port_config port_init;
+	// port_get_config_defaults(&port_init);
 
-	port_init.direction = PORT_PIN_DIR_OUTPUT;
-	port_pin_set_config(int_pin, &port_init);
-	port_pin_set_output_level(int_pin, 1);
+	// port_init.direction = PORT_PIN_DIR_OUTPUT;
+	// port_pin_set_config(int_pin, &port_init);
+	// port_pin_set_output_level(int_pin, 1);
 }
 
 int main(void)
@@ -225,3 +224,34 @@ int main(void)
 
 	return 0;
 }
+
+
+int reset_handler(void)
+{
+    return main();
+}
+
+
+inline bool port_pin_get_input_level(void)
+{return 0;}
+
+inline bool port_pin_get_output_level(void)
+{return 0;}
+
+void delay_ms(uint32_t n){};
+
+inline void port_pin_set_output_level(
+    const uint8_t gpio_pin,
+    const bool level)
+{};
+
+void system_init(void){};
+
+// system_init
+void delay_init(void){};
+void i2c_init(void){};
+// void time_init(void){};
+// system_cpu_clock_get_hz
+// SysTick_Config
+
+uint32_t SysTick_Config(uint32_t ticks){};

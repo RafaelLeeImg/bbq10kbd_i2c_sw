@@ -1,5 +1,5 @@
 CROSS_COMPILE ?= arm-none-eabi-
-TARGET        ?= lagom
+TARGET        ?= stm32l053
 
 CC      := $(CROSS_COMPILE)gcc
 LD      := $(CROSS_COMPILE)ld
@@ -13,22 +13,6 @@ SAMD_I2C      ?= $(SAMD)
 SAMD_CLOCK    ?= $(SAMD)
 
 SRCS += \
-	SDK/common/utils/interrupt/interrupt_sam_nvic.c \
-	SDK/common2/services/delay/sam0/cycle_counter.c \
-	SDK/sam0/drivers/port/port.c \
-	SDK/sam0/drivers/sercom/sercom.c \
-	SDK/sam0/drivers/sercom/sercom_interrupt.c \
-	SDK/sam0/drivers/sercom/usart/usart.c \
-	SDK/sam0/drivers/system/clock/clock_$(SAMD_CLOCK)/clock.c \
-	SDK/sam0/drivers/system/clock/clock_$(SAMD_CLOCK)/gclk.c \
-	SDK/sam0/drivers/sercom/i2c/i2c_$(SAMD_I2C)/i2c_slave.c \
-	SDK/sam0/drivers/sercom/i2c/i2c_$(SAMD_I2C)/i2c_slave_interrupt.c \
-	SDK/sam0/drivers/system/pinmux/pinmux.c \
-	SDK/sam0/drivers/system/system.c \
-	SDK/sam0/drivers/tc/tc_sam_d_r_h/tc.c \
-	SDK/sam0/utils/cmsis/$(SAMD)/source/gcc/startup_$(SAMD).c \
-	SDK/sam0/utils/cmsis/$(SAMD)/source/system_$(SAMD).c \
-	SDK/sam0/utils/syscalls/gcc/syscalls.c \
 	targets/$(TARGET)/target.c \
 	app/backlight.c \
 	app/fifo.c \
@@ -39,29 +23,6 @@ SRCS += \
 	app/time.c \
 
 INCS += \
-	SDK/common/utils \
-	SDK/common2/services \
-	SDK/common2/services/delay \
-	SDK/sam0/drivers/gpio \
-	SDK/sam0/drivers/port \
-	SDK/sam0/drivers/sercom \
-	SDK/sam0/drivers/sercom/i2c \
-	SDK/sam0/drivers/system \
-	SDK/sam0/drivers/system/clock \
-	SDK/sam0/drivers/system/clock/clock_$(SAMD_CLOCK) \
-	SDK/sam0/drivers/sercom \
-	SDK/sam0/drivers/system/interrupt \
-	SDK/sam0/drivers/system/interrupt/system_interrupt_$(SAMD) \
-	SDK/sam0/drivers/system/pinmux \
-	SDK/sam0/drivers/system/power/power_sam_d_r_h \
-	SDK/sam0/drivers/system/reset/reset_sam_d_r_h \
-	SDK/sam0/drivers/tc \
-	SDK/sam0/utils \
-	SDK/sam0/utils/cmsis/$(SAMD)/include \
-	SDK/sam0/utils/cmsis/$(SAMD)/source \
-	SDK/sam0/utils/header_files \
-	SDK/sam0/utils/preprocessor \
-	SDK/thirdparty/CMSIS/Include \
 	targets/$(TARGET) \
 	targets \
 	app/config \
@@ -80,26 +41,9 @@ endif
 
 ifeq ($(BBQ10_USB_ENABLE),true)
 SRCS += \
-	SDK/common/services/sleepmgr/samd/sleepmgr.c \
-	SDK/common/services/usb/class/hid/device/kbd/udi_hid_kbd.c \
-	SDK/common/services/usb/class/hid/device/kbd/udi_hid_kbd_desc.c \
-	SDK/common/services/usb/class/hid/device/udi_hid.c \
-	SDK/common/services/usb/udc/udc.c \
-	SDK/sam0/drivers/usb/usb_sam_d_r/usb.c \
-	SDK/sam0/drivers/usb/stack_interface/usb_device_udd.c  \
 	app/usb.c \
 
 INCS += \
-	SDK/common/boards \
-	SDK/common/boards/user_board \
-	SDK/common/services/sleepmgr \
-	SDK/common/services/usb \
-	SDK/common/services/usb/udc \
-	SDK/common/services/usb/class/hid \
-	SDK/common/services/usb/class/hid/device \
-	SDK/common/services/sleepmgr/samd \
-	SDK/sam0/drivers/extint \
-	SDK/sam0/drivers/usb \
 
 DEFS += \
 	BBQ10_USB_ENABLE \
@@ -118,7 +62,8 @@ endif
 
 OBJS := $(patsubst %.c,out/$(TARGET)/obj/%.c.o, $(filter %.c, $(SRCS)))
 DEPS := $(patsubst %.o,%.d,$(OBJS))
-LDSCRIPT := SDK/sam0/utils/linker_scripts/$(SAMD)/gcc/$(LD_FILE)
+LDSCRIPT := libopencm3/lib/ \
+	libopencm3/lib/stm32/l0/
 
 CFLAGS := \
 	-mcpu=cortex-m0plus -mthumb \
@@ -131,7 +76,9 @@ CFLAGS := \
 LDFLAGS := \
 	-mcpu=cortex-m0plus -mthumb \
 	-Wl,--gc-sections --specs=nano.specs \
-	-T$(LDSCRIPT) \
+	-nostartfiles \
+	$(addprefix -L, $(LDSCRIPT)) \
+	$(addprefix -T, $(LD_FILE)) \
 	$(LIBS)
 
 all: out/$(TARGET)/app.bin
