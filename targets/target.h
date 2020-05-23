@@ -4,12 +4,12 @@
 
 #include <stdint.h>
 
-extern const uint8_t row_pins[NUM_OF_ROWS];
-extern const uint8_t col_pins[NUM_OF_COLS];
+extern const uint32_t row_pins[NUM_OF_ROWS*2];
+extern const uint32_t col_pins[NUM_OF_COLS*2];
 
 #if NUM_OF_BTNS > 0
-extern const uint8_t btn_pins[NUM_OF_BTNS];
+extern const uint32_t btn_pins[NUM_OF_BTNS*2];
 #endif
 
-extern const uint8_t int_pin;
-extern const uint8_t kbd_bl_pin;
+extern const uint32_t int_pin[2];
+extern const uint32_t kbd_bl_pin[2];

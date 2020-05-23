@@ -9,6 +9,7 @@
 #include "time.h"
 #include "usb.h"
 #include "led.h"
+#include <libopencm3/stm32/gpio.h>
 
 //#define DEBUG_SOFT_SERIAL
 //#define DEBUG_SOFT_SERIAL_PIN PIN_PA16
@@ -181,12 +182,7 @@ static void lock_cb(bool caps_changed, bool num_changed)
 
 static void config_int_pin(void)
 {
-	// struct port_config port_init;
-	// port_get_config_defaults(&port_init);
-
-	// port_init.direction = PORT_PIN_DIR_OUTPUT;
-	// port_pin_set_config(int_pin, &port_init);
-	// port_pin_set_output_level(int_pin, 1);
+	gpio_mode_setup(int_pin[0], GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, int_pin[1]);
 }
 
 int main(void)

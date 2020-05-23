@@ -8,10 +8,6 @@ SIZE    := $(CROSS_COMPILE)size
 
 include targets/$(TARGET)/target.mk
 
-SAMD          ?= samd20
-SAMD_I2C      ?= $(SAMD)
-SAMD_CLOCK    ?= $(SAMD)
-
 SRCS += \
 	targets/$(TARGET)/target.c \
 	app/backlight.c \
