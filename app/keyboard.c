@@ -6,6 +6,7 @@
 #include "util.h"
 
 #include <stdlib.h>
+#include <libopencm3/stm32/gpio.h>
 
 enum mod
 {
@@ -155,11 +156,13 @@ static void next_item_state(struct list_item * const p_item, const bool pressed)
 					self.numlock_changed = true;
 				}
 
+				if (!self.mods[MOD_ALT]) {
+					self.capslock_changed = false;
+					self.numlock_changed = false;
+				}
+
 				if (self.lock_callback && (self.capslock_changed || self.numlock_changed))
 					self.lock_callback(self.capslock_changed, self.numlock_changed);
-
-				self.capslock_changed = false;
-				self.numlock_changed = false;
 
 				transition_to(p_item, KEY_STATE_PRESSED);
 
@@ -193,21 +196,14 @@ static void next_item_state(struct list_item * const p_item, const bool pressed)
 
 void keyboard_process(void)
 {
-	// struct port_config port_init;
-
 	if ((time_uptime_ms() - self.last_process_time) <= KEY_POLL_TIME)
 		return;
 
-	// port_get_config_defaults(&port_init);
-
 	for (uint32_t c = 0; c < NUM_OF_COLS; ++c) {
-		// port_init.direction = PORT_PIN_DIR_OUTPUT;
-		// port_pin_set_config(col_pins[c], &port_init);
-		// port_pin_set_output_level(col_pins[c], 0);
+		gpio_mode_setup(col_pins[2 * c], GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, col_pins[2 * c + 1]);
 
 		for (uint32_t r = 0; r < NUM_OF_ROWS; ++r) {
-			// const bool pressed = (port_pin_get_input_level(row_pins[r]) == 0);
-			const bool pressed = 0;
+			const bool pressed = (gpio_get(row_pins[2*r], row_pins[2*r+1]) == 0);
 			const int32_t key_idx = (int32_t)((r * NUM_OF_COLS) + c);
 
 			int32_t list_idx = -1;
@@ -220,7 +216,7 @@ void keyboard_process(void)
 			}
 
 			if (list_idx > -1) {
-				// next_item_state(&self.list[list_idx], pressed);
+				next_item_state(&self.list[list_idx], pressed);
 				continue;
 			}
 
@@ -239,16 +235,12 @@ void keyboard_process(void)
 			}
 		}
 
-		// port_pin_set_output_level(col_pins[c], 1);
-
-		// port_init.direction = PORT_PIN_DIR_INPUT;
-		// port_init.input_pull = PORT_PIN_PULL_NONE;
-		// port_pin_set_config(col_pins[c], &port_init);
+		gpio_mode_setup(col_pins[2 * c], GPIO_MODE_INPUT, GPIO_PUPD_NONE, col_pins[2 * c + 1]);
 	}
 
 #if NUM_OF_BTNS > 0
 	for (uint32_t b = 0; b < NUM_OF_BTNS; ++b) {
-		const bool pressed = 0;
+		const bool pressed = (gpio_get(btn_pins[2*b], btn_pins[2*b+1]) == 0);
 
 		int32_t list_idx = -1;
 		for (int32_t i = 0; i < KEY_LIST_SIZE; ++i) {
@@ -305,29 +297,20 @@ bool keyboard_get_numlock(void)
 
 void keyboard_init(void)
 {
-// 	struct port_config port_init;
-// 	port_get_config_defaults(&port_init);
+	for (int i = 0; i < MOD_LAST; ++i)
+		self.mods[i] = false;
 
-// 	for (int i = 0; i < MOD_LAST; ++i)
-// 		self.mods[i] = false;
+	// Rows
+	for (uint32_t i = 0; i < NUM_OF_ROWS; ++i)
+		gpio_mode_setup(row_pins[2 * i], GPIO_MODE_INPUT, GPIO_PUPD_PULLUP, row_pins[2 * i + 1]);
 
-// 	// Rows
-// 	port_init.direction = PORT_PIN_DIR_INPUT;
-// 	port_init.input_pull = PORT_PIN_PULL_UP;
-// 	for (uint32_t i = 0; i < NUM_OF_ROWS; ++i)
-// 		port_pin_set_config(row_pins[i], &port_init);
+	// Cols
+	for(uint32_t i = 0; i < NUM_OF_COLS; ++i)
+		gpio_mode_setup(col_pins[2 * i], GPIO_MODE_INPUT, GPIO_PUPD_NONE, col_pins[2 * i + 1]);
 
-// 	// Cols
-// 	port_init.direction = PORT_PIN_DIR_INPUT;
-// 	port_init.input_pull = PORT_PIN_PULL_NONE;
-// 	for(uint32_t i = 0; i < NUM_OF_COLS; ++i)
-// 		port_pin_set_config(col_pins[i], &port_init);
-
-// 	// Btns
-// #if NUM_OF_BTNS > 0
-// 	port_init.direction = PORT_PIN_DIR_INPUT;
-// 	port_init.input_pull = PORT_PIN_PULL_UP;
-// 	for(uint32_t i = 0; i < NUM_OF_BTNS; ++i)
-// 		port_pin_set_config(btn_pins[i], &port_init);
-// #endif
+	// Btns
+#if NUM_OF_BTNS > 0
+	for(uint32_t i = 0; i < NUM_OF_BTNS; ++i)
+		gpio_mode_setup(btn_pins[2 * i], GPIO_MODE_INPUT, GPIO_PUPD_PULLUP, btn_pins[2 * i + 1]);
+#endif
 }
