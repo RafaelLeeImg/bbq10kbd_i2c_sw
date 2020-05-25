@@ -245,7 +245,6 @@ void system_init(void){};
 
 // system_init
 void delay_init(void){};
-void i2c_init(void){};
 // void time_init(void){};
 // system_cpu_clock_get_hz
 // SysTick_Config
